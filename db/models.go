@@ -7,8 +7,9 @@ package db
 import ()
 
 type User struct {
-	ID       string
-	Email    string
-	Password string
-	Name     string
+	ID         string
+	Name       string
+	Password   string
+	Provider   string
+	Providerid string
 }

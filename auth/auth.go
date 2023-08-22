@@ -9,9 +9,12 @@ import (
 
 var ErrWrongCredentials = errors.New("invalid credentials")
 
-func SignInUser(ctx context.Context, email string, password string) (string, error) {
+func SignInUser(ctx context.Context, provider string, providerId string, password string) (string, error) {
 	queries := db.GetQuerier()
-	user, err := queries.GetUserWithEmail(ctx, email)
+	user, err := queries.GetUser(ctx, db.GetUserParams{
+		Provider:   provider,
+		Providerid: providerId,
+	})
 	if err != nil {
 		return "", err
 	}

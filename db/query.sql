@@ -1,5 +1,5 @@
 -- name: CreateUser :exec
-INSERT INTO users (id, email, name, password) VALUES (?, ?, ?, ?);
+INSERT INTO users (id, provider, providerId, name, password) VALUES (?, ?, ?, ?, ?);
 
--- name: GetUserWithEmail :one
-SELECT * FROM users WHERE email = ? LIMIT 1;
+-- name: GetUser :one
+SELECT * FROM users WHERE provider = ? AND providerId = ? LIMIT 1;

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"kv/auth/auth_grpc"
+	"kv/auth/auth"
 	"log"
 	"net"
 
@@ -15,7 +15,7 @@ func main() {
 	}
 	grpcServer := grpc.NewServer()
 
-	auth_grpc.RegisterAuthGrpc(grpcServer)
+	auth.RegisterAuthGrpc(grpcServer)
 
 	log.Fatal(grpcServer.Serve(ls))
 }

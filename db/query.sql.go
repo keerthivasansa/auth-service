@@ -10,38 +10,46 @@ import (
 )
 
 const createUser = `-- name: CreateUser :exec
-INSERT INTO users (id, email, name, password) VALUES (?, ?, ?, ?)
+INSERT INTO users (id, provider, providerId, name, password) VALUES (?, ?, ?, ?, ?)
 `
 
 type CreateUserParams struct {
-	ID       string
-	Email    string
-	Name     string
-	Password string
+	ID         string
+	Provider   string
+	Providerid string
+	Name       string
+	Password   string
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) error {
 	_, err := q.db.ExecContext(ctx, createUser,
 		arg.ID,
-		arg.Email,
+		arg.Provider,
+		arg.Providerid,
 		arg.Name,
 		arg.Password,
 	)
 	return err
 }
 
-const getUserWithEmail = `-- name: GetUserWithEmail :one
-SELECT id, email, password, name FROM users WHERE email = ? LIMIT 1
+const getUser = `-- name: GetUser :one
+SELECT id, name, password, provider, providerid FROM users WHERE provider = ? AND providerId = ? LIMIT 1
 `
 
-func (q *Queries) GetUserWithEmail(ctx context.Context, email string) (User, error) {
-	row := q.db.QueryRowContext(ctx, getUserWithEmail, email)
+type GetUserParams struct {
+	Provider   string
+	Providerid string
+}
+
+func (q *Queries) GetUser(ctx context.Context, arg GetUserParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUser, arg.Provider, arg.Providerid)
 	var i User
 	err := row.Scan(
 		&i.ID,
-		&i.Email,
-		&i.Password,
 		&i.Name,
+		&i.Password,
+		&i.Provider,
+		&i.Providerid,
 	)
 	return i, err
 }

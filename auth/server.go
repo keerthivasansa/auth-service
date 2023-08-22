@@ -1,8 +1,7 @@
-package auth_grpc
+package auth
 
 import (
 	context "context"
-	"kv/auth/auth"
 
 	"google.golang.org/grpc"
 )
@@ -18,7 +17,11 @@ func (s *Server) IsAuth(ctx context.Context, req *AuthRequest) (*AuthResponse, e
 }
 
 func (s *Server) GenerateToken(ctx context.Context, req *AuthTokenRequest) (*AuthToken, error) {
-	userId, err := auth.SignInUser(ctx, req.Email, req.Password)
+	provider := req.GetProvider()
+	if provider != AuthProvider_EMAIL {
+		return nil, ErrUnsupportedProvider
+	}
+	userId, err := SignInUser(ctx, provider.String(), req.ProviderId, req.Password)
 	token := &AuthToken{
 		Token: userId,
 	}
