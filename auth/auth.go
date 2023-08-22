@@ -5,6 +5,8 @@ import (
 	"errors"
 	"kv/auth/db"
 	"kv/auth/utils"
+
+	"github.com/google/uuid"
 )
 
 var ErrWrongCredentials = errors.New("invalid credentials")
@@ -23,4 +25,15 @@ func SignInUser(ctx context.Context, provider string, providerId string, passwor
 		return "", ErrWrongCredentials
 	}
 	return user.ID, nil
+}
+
+func CreateUser(ctx context.Context, provider string, providerId string, password string) error {
+	queries := db.GetQuerier()
+	userId := uuid.NewString()
+	return queries.CreateUser(ctx, db.CreateUserParams{
+		ID:         userId,
+		Password:   utils.Hash(password),
+		Provider:   provider,
+		Providerid: providerId,
+	})
 }
